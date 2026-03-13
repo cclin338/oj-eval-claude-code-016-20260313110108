@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <map>
 #include <string>
+#include <climits>
 
 using namespace std;
 
@@ -83,16 +84,15 @@ public:
     vector<int> find(const string& key) {
         vector<int> result;
 
-        for (auto it = data.begin(); it != data.end(); ++it) {
-            if (it->first.first == key) {
-                result.push_back(it->first.second);
-            } else if (!result.empty()) {
-                // We've passed all entries with this key
-                break;
-            }
+        // Use lower_bound to jump directly to the first occurrence
+        auto it = data.lower_bound({key, INT_MIN});
+
+        while (it != data.end() && it->first.first == key) {
+            result.push_back(it->first.second);
+            ++it;
         }
 
-        sort(result.begin(), result.end());
+        // Already sorted by map's ordering
         return result;
     }
 };
